@@ -37,10 +37,12 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
     }
 
 
-    // si le parent deborde aussi
+    //TODO: à completer
     public void insertIntoNode(Node<C, V> node, Pair<C, V> pair) {
         rechercheElement(node, pair);
-        //if (trouver)
+        if (trouver != null) {
+
+        }
     }
 
     public int tauxDeRemplisage(Node<C, V> node) {
@@ -52,9 +54,7 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
     }
 
 
-
     /**
-     *
      * @param node le noeud debordé
      */
     public void splitElement(Node<C, V> node) {
@@ -130,7 +130,7 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
 
 
             node.getElements().clear();
-            Set<Node<C,V>> fils = node.getFils();
+            Set<Node<C, V>> fils = node.getFils();
 
             // elements
             node.getElements().add(elementsADroite[0]);
@@ -143,17 +143,16 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
             nodeFilsGauche.getVoisins().add(nodeFilsDroite);
 
 
-
             // parent
             nodeFilsDroite.setParent(node);
             nodeFilsGauche.setParent(node);
 
-            for (Node<C,V> n : fils){
-                Pair<C,V> parentMin = n.getElements().iterator().next();
-                Pair<C,V> filsMin = node.getElements().iterator().next();
-                if (parentMin.getCle().compareTo(filsMin.getCle()) >= 0){
+            for (Node<C, V> n : fils) {
+                Pair<C, V> parentMin = n.getElements().iterator().next();
+                Pair<C, V> filsMin = node.getElements().iterator().next();
+                if (parentMin.getCle().compareTo(filsMin.getCle()) >= 0) {
                     nodeFilsDroite.getFils().add(n);
-                }else {
+                } else {
                     nodeFilsGauche.getFils().add(n);
                 }
             }
@@ -163,7 +162,7 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
             node.getFils().add(nodeFilsGauche);
 
             this.racine = node;
-        }else if (node.isIntermediaire()){
+        } else if (node.isIntermediaire()) {
             int milieu = (node.getElements().size() / 2);
             Pair<C, V> elementsAGauche[] = (Pair<C, V>[]) node.getElements().stream().limit(milieu).toArray();
             Pair<C, V> elementsADroite[] = (Pair<C, V>[]) node.getElements().stream().skip(milieu).toArray();
@@ -173,7 +172,7 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
             Node<C, V> nodeFilsGauche = new Node<>();
 
 
-            Set<Node<C,V>> fils = node.getFils();
+            Set<Node<C, V>> fils = node.getFils();
 
             // elements
             node.getParent().getElements().add(elementsADroite[0]);
@@ -186,7 +185,6 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
             nodeFilsGauche.getVoisins().add(nodeFilsDroite);
 
 
-
             // parent
             nodeFilsDroite.setParent(node.getParent());
             nodeFilsGauche.setParent(node.getParent());
@@ -194,12 +192,12 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
             node.getParent().getFils().add(nodeFilsDroite);
             node.getParent().getFils().add(nodeFilsGauche);
 
-            for (Node<C,V> n : fils){
-                Pair<C,V>  filsMin  = n.getElements().iterator().next();
-                Pair<C,V> parentMin= node.getParent().getElements().iterator().next();
-                if (parentMin.getCle().compareTo(filsMin.getCle()) >= 0){
+            for (Node<C, V> n : fils) {
+                Pair<C, V> filsMin = n.getElements().iterator().next();
+                Pair<C, V> parentMin = node.getParent().getElements().iterator().next();
+                if (parentMin.getCle().compareTo(filsMin.getCle()) >= 0) {
                     nodeFilsDroite.getFils().add(n);
-                }else {
+                } else {
                     nodeFilsGauche.getFils().add(n);
                 }
             }
@@ -210,36 +208,12 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
         }
 
 
-
     }
 
-    // à changer
+    //TODO: à changer si le pair est superieur ca marche pas
     public void rechercheElement(Node<C, V> node, Pair<C, V> pair) {
         if (node.isFeuille()) {
-            if (node.getElements().contains(pair)) {
-                trouver = node;
-            } else {
-                trouver = null;
-            }
-        } else {
-            for (Node<C, V> noeu : racine.getFils()) {
-                for (Pair<C, V> p : noeu.getElements()) {
-                    if (p.getCle().compareTo(pair.getCle()) <= 0) {
-                        rechercheElement(noeu, pair);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    public void rechercheInsertion(Node<C, V> node, Pair<C, V> pair) {
-        if (node.isFeuille()) {
-            if (node.getElements().contains(pair)) {
-                return;
-            } else {
-                // insert
-            }
+            trouver = node;
         } else {
             for (Node<C, V> noeu : racine.getFils()) {
                 for (Pair<C, V> p : noeu.getElements()) {
