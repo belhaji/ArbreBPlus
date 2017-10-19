@@ -35,18 +35,17 @@ public class Pair<C extends Comparable<C>, V> implements Comparable<Pair<C, V>> 
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Pair<?, ?> pair = (Pair<?, ?>) o;
 
-        if (cle != null ? !cle.equals(pair.cle) : pair.cle != null) return false;
-        return valeur != null ? valeur.equals(pair.valeur) : pair.valeur == null;
+        return cle != null ? cle.equals(pair.cle) : pair.cle == null;
     }
 
     @Override
     public int hashCode() {
-        int result = cle != null ? cle.hashCode() : 0;
-        result = 31 * result + (valeur != null ? valeur.hashCode() : 0);
-        return result;
+        return cle != null ? cle.hashCode() : 0;
     }
 
     @Override

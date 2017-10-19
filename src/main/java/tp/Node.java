@@ -36,6 +36,25 @@ public class Node<C extends Comparable<C>, V> implements Comparable<Node<C, V>> 
         return (this.fils.size() == 0);
     }
 
+    public void printNode(int depth) {
+        StringBuilder tabs = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            tabs.append("\t");
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("| ");
+        StringBuilder dashes = new StringBuilder();
+        dashes.append("+");
+        Iterator<Pair<C, V>> iterator = this.getElements().iterator();
+        while (iterator.hasNext()) {
+            dashes.append("----+");
+            sb.append(String.format("%1s | ", iterator.next().getCle().toString()));
+        }
+        System.out.println(tabs.toString() + dashes.toString());
+        System.out.println(tabs.toString() + sb.toString());
+        System.out.println(tabs.toString() + dashes.toString());
+    }
+
     public boolean isIntermediaire() {
         return (!isRacine() && !isFeuille());
     }
@@ -83,7 +102,6 @@ public class Node<C extends Comparable<C>, V> implements Comparable<Node<C, V>> 
     @Override
     public String toString() {
         return "Node{" +
-                "id=" + id +
                 ", elements=" + elements +
                 '}';
     }

@@ -1,7 +1,9 @@
 import org.junit.Assert;
 import org.junit.Test;
+import tp.ArbreBPlus;
 import tp.Node;
 import tp.Pair;
+import tp.TreeGenerator;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -54,9 +56,22 @@ public class PairComparableTest {
         nodeSet.add(node3);
         nodeSet.add(node1);
         nodeSet.add(node2);
-        nodeSet.forEach(n -> System.out.println(n));
-        Iterator<Node<Integer,String>> iterator = nodeSet.iterator();
+        Iterator<Node<Integer, String>> iterator = nodeSet.iterator();
         assertEquals(iterator.next(), node1);
         assertEquals(iterator.next(), node2);
+    }
+
+    @Test
+    public void testRechercheElement() {
+        ArbreBPlus<Integer, String> arbreBPlus = TreeGenerator.generate(true);
+        arbreBPlus.rechercheNode(arbreBPlus.getRacine(), new Pair<>(41, null));
+        Node<Integer,String> node = arbreBPlus.getNoeudTrouver();
+        assertNotNull(node);
+    }
+
+    @Test
+    public void testArbrePrint(){
+        ArbreBPlus<Integer, String> arbreBPlus = TreeGenerator.generate(true);
+        arbreBPlus.print();
     }
 }

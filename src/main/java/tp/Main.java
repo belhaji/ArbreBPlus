@@ -7,6 +7,9 @@ package tp;
 public class Main {
 
     public static void main(String[] args) {
-
+        ArbreBPlus<Integer, String> arbreBPlus = TreeGenerator.generate(true);
+        arbreBPlus.rechercheNode(arbreBPlus.getRacine(), new Pair<>(41, null));
+        Node<Integer,String> node = arbreBPlus.getNoeudTrouver();
+        node.printNode(0);
     }
 }

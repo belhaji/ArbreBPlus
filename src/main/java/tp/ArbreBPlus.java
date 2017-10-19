@@ -1,7 +1,11 @@
 package tp;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by adilbelhaji et Marie Rousselet on 10/4/17.
@@ -11,13 +15,15 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
     private Strategie strategie;
     private StrategieComparaison strategieComparaison;
     private Node<C, V> racine;
-    private Node<C, V> trouver = null;
+    private Node<C, V> noeudTrouver = null;
+    private boolean debug;
 
-    public ArbreBPlus(int n, Strategie strategie, StrategieComparaison strategieComparaison, Node<C, V> racine) {
+    public ArbreBPlus(int n, Strategie strategie, StrategieComparaison strategieComparaison, Node<C, V> racine, boolean debug) {
         this.n = n;
         this.strategie = strategie;
         this.strategieComparaison = strategieComparaison;
         this.racine = racine;
+        this.debug = debug;
     }
 
     public int getN() {
@@ -36,11 +42,14 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
         return strategieComparaison;
     }
 
+    public Node<C, V> getNoeudTrouver() {
+        return noeudTrouver;
+    }
 
     //TODO: à completer
     public void insertIntoNode(Node<C, V> node, Pair<C, V> pair) {
         rechercheElement(node, pair);
-        if (trouver != null) {
+        if (noeudTrouver != null) {
 
         }
     }
@@ -210,20 +219,65 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
 
     }
 
-    //TODO: à changer si le pair est superieur ca marche pas
-    public void rechercheElement(Node<C, V> node, Pair<C, V> pair) {
+
+    public Pair<C, V> rechercheElement(Node<C, V> node, Pair<C, V> pair) {
+        noeudTrouver = null;
+        rechercheNode(node, pair);
+        return noeudTrouver.getElements().stream()
+                .filter(p -> p.equals(pair))
+                .findFirst()
+                .orElse(null);
+    }
+
+
+    public void rechercheNode(Node<C, V> node, Pair<C, V> pair) {
+        if (debug) {
+            node.printNode(0);
+            if (!node.isFeuille()){
+                System.out.println("||");
+                System.out.println("\\/");
+            }
+
+        }
         if (node.isFeuille()) {
-            trouver = node;
+            noeudTrouver = node;
         } else {
-            for (Node<C, V> noeu : racine.getFils()) {
-                for (Pair<C, V> p : noeu.getElements()) {
-                    if (p.getCle().compareTo(pair.getCle()) <= 0) {
-                        rechercheElement(noeu, pair);
-                        break;
+            Iterator<Pair<C, V>> parentElements = node.getElements().iterator();
+            Iterator<Node<C, V>> fils = node.getFils().iterator();
+            while (parentElements.hasNext()) {
+                Pair<C, V> currentElement = parentElements.next();
+                if (pair.compareTo(currentElement) < 0) {
+                    rechercheNode(fils.next(), pair);
+                    return;
+                } else {
+                    if (parentElements.hasNext() || pair.compareTo(currentElement) >= 0) {
+                        fils.next();
                     }
                 }
+
             }
+            rechercheNode(fils.next(), pair);
         }
     }
 
+    private void print(Node<C, V> node, int depth) {
+        node.printNode(depth);
+        for (Node<C, V> n : node.getFils()) {
+            print(n, depth + 1);
+        }
+
+    }
+
+
+    public void print() {
+        print(this.racine, 0);
+    }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
 }
