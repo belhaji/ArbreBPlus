@@ -81,7 +81,9 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
 
             // reusing the same node
             node.getElements().clear();
-            node.getElements().add(elementsADroite.get(0));
+            Pair<C,V> el = new Pair<C, V>(elementsADroite.get(0).getCle(), elementsADroite.get(0).getValeur());
+            el.setValeur(null);
+            node.getElements().add(el);
 
             // parent
             nodeFilsDroite.setParent(node);
@@ -122,7 +124,9 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
             node.getFils().add(nodeFilsGauche);
         } else {
 
-            node.getParent().getElements().add(elementsADroite.get(0));
+            Pair<C,V> el = new Pair<C, V>(elementsADroite.get(0).getCle(), elementsADroite.get(0).getValeur());
+            el.setValeur(null);
+            node.getParent().getElements().add(el);
             // parent
             nodeFilsDroite.setParent(node.getParent());
             nodeFilsGauche.setParent(node.getParent());
