@@ -1,10 +1,8 @@
 import org.junit.Assert;
 import org.junit.Test;
-import tp.ArbreBPlus;
-import tp.Node;
-import tp.Pair;
-import tp.TreeGenerator;
+import tp.*;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
@@ -15,7 +13,7 @@ import static org.junit.Assert.*;
 /**
  * Created by adilbelhaji on 10/18/17.
  */
-public class PairComparableTest {
+public class ArbreTestCase {
 
     @Test
     public void testPairSetSort() {
@@ -62,16 +60,46 @@ public class PairComparableTest {
     }
 
     @Test
-    public void testRechercheElement() {
+    public void testRechercheNode() {
         ArbreBPlus<Integer, String> arbreBPlus = TreeGenerator.generate(true);
-        arbreBPlus.rechercheNode(arbreBPlus.getRacine(), new Pair<>(41, null));
-        Node<Integer,String> node = arbreBPlus.getNoeudTrouver();
+        arbreBPlus.rechercheNode(arbreBPlus.getRacine(), new Pair<>(41, null), false);
+        Node<Integer, String> node = arbreBPlus.getNoeudTrouver();
         assertNotNull(node);
     }
 
     @Test
-    public void testArbrePrint(){
+    public void testRechercheElement() {
+        Integer cle = 30;
+        ArbreBPlus<Integer, String> arbreBPlus = TreeGenerator.generate(true);
+        Pair<Integer, String> pair = arbreBPlus.rechercheElement(arbreBPlus.getRacine(), new Pair<>(cle, null));
+        assertNotNull(pair);
+        System.out.println("Cle " + cle + " => " + pair.getValeur());
+    }
+
+    @Test
+    public void testArbrePrint() {
         ArbreBPlus<Integer, String> arbreBPlus = TreeGenerator.generate(true);
         arbreBPlus.print();
     }
+
+    @Test
+    public void testArbrePrintPathTo() {
+        ArbreBPlus<Integer, String> arbreBPlus = TreeGenerator.generate(true);
+        arbreBPlus.printPathTo(new Pair<>(30, ""));
+    }
+
+    @Test
+    public void testInsertion() {
+        ArbreBPlus<Integer, String> arbreBPlus = new ArbreBPlus<>(3, Strategie.FULL, StrategieComparaison.EGALE, new Node<Integer, String>());
+        //Integer[] keys = new Integer[]{20, 40, 60, 30, 25, 10, 70, 50, 53, 45};
+        Integer[] keys = new Integer[]{50, 25, 40, 20, 10, 30, 49, 53, 45, 60, 70, 42, 46,47};
+        for (Integer key : keys) {
+            System.out.println("Ajout de " + key);
+            arbreBPlus.insert(new Pair<Integer, String>(key, "val" + key));
+            arbreBPlus.print();
+        }
+
+    }
+
+
 }

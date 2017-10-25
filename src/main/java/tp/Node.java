@@ -47,8 +47,12 @@ public class Node<C extends Comparable<C>, V> implements Comparable<Node<C, V>> 
         dashes.append("+");
         Iterator<Pair<C, V>> iterator = this.getElements().iterator();
         while (iterator.hasNext()) {
-            dashes.append("----+");
-            sb.append(String.format("%1s | ", iterator.next().getCle().toString()));
+            C cle = iterator.next().getCle();
+            for (int i = 0; i < cle.toString().length()+2; i++) {
+                dashes.append("-");
+            }
+            dashes.append("+");
+            sb.append(String.format("%s | ", cle.toString()));
         }
         System.out.println(tabs.toString() + dashes.toString());
         System.out.println(tabs.toString() + sb.toString());

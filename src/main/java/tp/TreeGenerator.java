@@ -22,14 +22,14 @@ public class TreeGenerator {
         node.getFils().add(createNode(50, 53));
         node.getFils().add(createNode(60, 70));
         root.getFils().add(node);
-        return new ArbreBPlus<>(3, Strategie.FULL, StrategieComparaison.EGALE, root, debug);
+        return new ArbreBPlus<>(3, Strategie.FULL, StrategieComparaison.EGALE, root);
 
     }
 
     private static Node<Integer, String> createNode(Integer... vals) {
         Node<Integer, String> node = new Node<>();
         for (Integer v : vals) {
-            node.getElements().add(new Pair<>(v, null));
+            node.getElements().add(new Pair<>(v, "nom" + v));
         }
         return node;
     }

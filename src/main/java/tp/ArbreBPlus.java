@@ -1,11 +1,9 @@
 package tp;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Created by adilbelhaji et Marie Rousselet on 10/4/17.
@@ -16,14 +14,12 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
     private StrategieComparaison strategieComparaison;
     private Node<C, V> racine;
     private Node<C, V> noeudTrouver = null;
-    private boolean debug;
 
-    public ArbreBPlus(int n, Strategie strategie, StrategieComparaison strategieComparaison, Node<C, V> racine, boolean debug) {
+    public ArbreBPlus(int n, Strategie strategie, StrategieComparaison strategieComparaison, Node<C, V> racine) {
         this.n = n;
         this.strategie = strategie;
         this.strategieComparaison = strategieComparaison;
         this.racine = racine;
-        this.debug = debug;
     }
 
     public int getN() {
@@ -47,11 +43,14 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
     }
 
     //TODO: à completer
-    public void insertIntoNode(Node<C, V> node, Pair<C, V> pair) {
-        rechercheElement(node, pair);
+    public void insert(Pair<C, V> pair) {
+        rechercheElement(this.racine, pair);
         if (noeudTrouver != null) {
-
+            noeudTrouver.getElements().add(pair);
+            if (noeudTrouver.getElements().size() > n) // si il y a un debordement
+                splitElement(noeudTrouver);
         }
+        noeudTrouver = null;
     }
 
     public int tauxDeRemplisage(Node<C, V> node) {
@@ -67,133 +66,63 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
      * @param node le noeud debordé
      */
     public void splitElement(Node<C, V> node) {
-        if (node.isFeuille() && node.isRacine()) {
-            int milieu = (node.getElements().size() / 2);
-            Pair<C, V> elementsAGauche[] = (Pair<C, V>[]) node.getElements().stream().limit(milieu).toArray();
-            Pair<C, V> elementsADroite[] = (Pair<C, V>[]) node.getElements().stream().skip(milieu).toArray();
+        int milieu = (node.getElements().size() / 2);
+        List<Pair<C, V>> elementsAGauche = node.getElements().stream().limit(milieu).collect(Collectors.toList());
+        List<Pair<C, V>> elementsADroite = node.getElements().stream().skip(milieu).collect(Collectors.toList());
 
-            Node<C, V> nodeFilsDroite = new Node<>();
+        Node<C, V> nodeFilsDroite = new Node<>();
+        Node<C, V> nodeFilsGauche = new Node<>();
 
-            Node<C, V> nodeFilsGauche = new Node<>();
+        nodeFilsDroite.getElements().addAll(elementsADroite);
+        nodeFilsGauche.getElements().addAll(elementsAGauche);
 
-            // vider la racine
+
+        if (node.isRacine()) {
+
+            // reusing the same node
             node.getElements().clear();
-
-            // elements
-            node.getElements().add(elementsADroite[0]);
-            nodeFilsDroite.getElements().addAll(Arrays.asList(elementsADroite));
-            nodeFilsGauche.getElements().addAll(Arrays.asList(elementsAGauche));
-
-
-            // voisins
-            nodeFilsDroite.getVoisins().add(nodeFilsGauche);
-            nodeFilsGauche.getVoisins().add(nodeFilsDroite);
-
+            node.getElements().add(elementsADroite.get(0));
 
             // parent
             nodeFilsDroite.setParent(node);
             nodeFilsGauche.setParent(node);
 
-            this.racine = node;
-
-        } else if (node.isFeuille() && !node.isRacine()) {
-            int milieu = (node.getElements().size() / 2);
-            Pair<C, V> elementsAGauche[] = (Pair<C, V>[]) node.getElements().stream().limit(milieu).toArray();
-            Pair<C, V> elementsADroite[] = (Pair<C, V>[]) node.getElements().stream().skip(milieu).toArray();
-
-            Node<C, V> nodeFilsDroite = new Node<>();
-
-            Node<C, V> nodeFilsGauche = new Node<>();
-
-
-            // elements
-            node.getParent().getElements().add(elementsADroite[0]);
-            nodeFilsDroite.getElements().addAll(Arrays.asList(elementsADroite));
-            nodeFilsGauche.getElements().addAll(Arrays.asList(elementsAGauche));
-
-
-            // voisins
-            nodeFilsDroite.getVoisins().add(nodeFilsGauche);
-            nodeFilsDroite.getVoisins().addAll(node.getParent().getFils());
-
-            nodeFilsGauche.getVoisins().add(nodeFilsDroite);
-            nodeFilsGauche.getVoisins().addAll(node.getParent().getFils());
-
-            // parent
-            nodeFilsDroite.setParent(node.getParent());
-            nodeFilsGauche.setParent(node.getParent());
-            // suppression d'ancien noeud
-            node.getParent().getFils().remove(node);
-
-            if (node.getParent().getElements().size() >= n) {
-                splitElement(node);
-            }
-        } else if (node.isRacine() && node.getFils().size() > 0) {
-            int milieu = (node.getElements().size() / 2);
-            Pair<C, V> elementsAGauche[] = (Pair<C, V>[]) node.getElements().stream().limit(milieu).toArray();
-            Pair<C, V> elementsADroite[] = (Pair<C, V>[]) node.getElements().stream().skip(milieu).toArray();
-
-            Node<C, V> nodeFilsDroite = new Node<>();
-
-            Node<C, V> nodeFilsGauche = new Node<>();
-
-
-            node.getElements().clear();
-            Set<Node<C, V>> fils = node.getFils();
-
-            // elements
-            node.getElements().add(elementsADroite[0]);
-            nodeFilsDroite.getElements().addAll(Arrays.asList(elementsADroite));
-            nodeFilsGauche.getElements().addAll(Arrays.asList(elementsAGauche));
-
-
-            // voisins à calculer
-            nodeFilsDroite.getVoisins().add(nodeFilsGauche);
-            nodeFilsGauche.getVoisins().add(nodeFilsDroite);
-
-
-            // parent
-            nodeFilsDroite.setParent(node);
-            nodeFilsGauche.setParent(node);
-
-            for (Node<C, V> n : fils) {
-                Pair<C, V> parentMin = n.getElements().iterator().next();
-                Pair<C, V> filsMin = node.getElements().iterator().next();
-                if (parentMin.getCle().compareTo(filsMin.getCle()) >= 0) {
-                    nodeFilsDroite.getFils().add(n);
-                } else {
-                    nodeFilsGauche.getFils().add(n);
+            if (!node.isFeuille()) {
+                // suppressio du 1er element
+                nodeFilsDroite.getElements().remove(elementsADroite.get(0));
+                Iterator<Pair<C, V>> parentIterator = nodeFilsGauche.getElements().iterator();
+                Iterator<Node<C, V>> filsIterator = node.getFils().iterator();
+                Node<C, V> n = null;
+                Pair<C, V> p = null;
+                boolean passToNextChild = true;
+                boolean passToNextElement = true;
+                while (parentIterator.hasNext() && filsIterator.hasNext()) {
+                    if (passToNextChild) n = filsIterator.next();
+                    if (passToNextElement) p = parentIterator.next();
+                    Pair<C, V> filsMin = n.getElements().iterator().next();
+                    if (filsMin.compareTo(p) <= 0) {
+                        nodeFilsGauche.getFils().add(n);
+                        n.setParent(nodeFilsGauche);
+                        passToNextChild = true;
+                        passToNextElement = false;
+                    } else {
+                        passToNextChild = false;
+                        passToNextElement = true;
+                    }
+                }
+                while (filsIterator.hasNext()) {
+                    Node<C,V> nn = filsIterator.next();
+                    nodeFilsDroite.getFils().add(nn);
+                    nn.setParent(nodeFilsDroite);
                 }
             }
 
             node.getFils().clear();
             node.getFils().add(nodeFilsDroite);
             node.getFils().add(nodeFilsGauche);
+        } else {
 
-            this.racine = node;
-        } else if (node.isIntermediaire()) {
-            int milieu = (node.getElements().size() / 2);
-            Pair<C, V> elementsAGauche[] = (Pair<C, V>[]) node.getElements().stream().limit(milieu).toArray();
-            Pair<C, V> elementsADroite[] = (Pair<C, V>[]) node.getElements().stream().skip(milieu).toArray();
-
-            Node<C, V> nodeFilsDroite = new Node<>();
-
-            Node<C, V> nodeFilsGauche = new Node<>();
-
-
-            Set<Node<C, V>> fils = node.getFils();
-
-            // elements
-            node.getParent().getElements().add(elementsADroite[0]);
-            nodeFilsDroite.getElements().addAll(Arrays.asList(elementsADroite));
-            nodeFilsGauche.getElements().addAll(Arrays.asList(elementsAGauche));
-
-
-            // voisins à calculer
-            nodeFilsDroite.getVoisins().add(nodeFilsGauche);
-            nodeFilsGauche.getVoisins().add(nodeFilsDroite);
-
-
+            node.getParent().getElements().add(elementsADroite.get(0));
             // parent
             nodeFilsDroite.setParent(node.getParent());
             nodeFilsGauche.setParent(node.getParent());
@@ -201,28 +130,49 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
             node.getParent().getFils().add(nodeFilsDroite);
             node.getParent().getFils().add(nodeFilsGauche);
 
-            for (Node<C, V> n : fils) {
-                Pair<C, V> filsMin = n.getElements().iterator().next();
-                Pair<C, V> parentMin = node.getParent().getElements().iterator().next();
-                if (parentMin.getCle().compareTo(filsMin.getCle()) >= 0) {
-                    nodeFilsDroite.getFils().add(n);
-                } else {
-                    nodeFilsGauche.getFils().add(n);
+            if (!node.isFeuille()) {
+                // suppressio du 1er element
+                nodeFilsDroite.getElements().remove(elementsADroite.get(0));
+                Iterator<Pair<C, V>> parentIterator = nodeFilsGauche.getElements().iterator();
+                Iterator<Node<C, V>> filsIterator = node.getFils().iterator();
+                Node<C, V> n = null;
+                Pair<C, V> p = null;
+                boolean passToNextChild = true;
+                boolean passToNextElement = true;
+                while (parentIterator.hasNext() && filsIterator.hasNext()) {
+                    if (passToNextChild) n = filsIterator.next();
+                    if (passToNextElement) p = parentIterator.next();
+                    Pair<C, V> filsMin = n.getElements().iterator().next();
+                    if (filsMin.compareTo(p) <= 0) {
+                        nodeFilsGauche.getFils().add(n);
+                        n.setParent(nodeFilsGauche);
+                        passToNextChild = true;
+                        passToNextElement = false;
+                    } else {
+                        passToNextChild = false;
+                        passToNextElement = true;
+                    }
                 }
+                while (filsIterator.hasNext()) {
+                    Node<C,V> nn = filsIterator.next();
+                    nodeFilsDroite.getFils().add(nn);
+                    nn.setParent(nodeFilsDroite);
+                }
+
             }
-            node.getParent().getFils().remove(node);
-            if (node.getParent().getElements().size() >= n) {
-                splitElement(node);
+
+            node.getParent().getFils().removeIf(n -> n.getId().equals(node.getId()));
+            if (node.getParent().getElements().size() > n) {
+                splitElement(node.getParent());
             }
         }
-
 
     }
 
 
     public Pair<C, V> rechercheElement(Node<C, V> node, Pair<C, V> pair) {
         noeudTrouver = null;
-        rechercheNode(node, pair);
+        rechercheNode(node, pair, false);
         return noeudTrouver.getElements().stream()
                 .filter(p -> p.equals(pair))
                 .findFirst()
@@ -230,10 +180,10 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
     }
 
 
-    public void rechercheNode(Node<C, V> node, Pair<C, V> pair) {
-        if (debug) {
+    public void rechercheNode(Node<C, V> node, Pair<C, V> pair, boolean printPath) {
+        if (printPath) {
             node.printNode(0);
-            if (!node.isFeuille()){
+            if (!node.isFeuille()) {
                 System.out.println("||");
                 System.out.println("\\/");
             }
@@ -247,16 +197,14 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
             while (parentElements.hasNext()) {
                 Pair<C, V> currentElement = parentElements.next();
                 if (pair.compareTo(currentElement) < 0) {
-                    rechercheNode(fils.next(), pair);
+                    rechercheNode(fils.next(), pair, printPath);
                     return;
                 } else {
-                    if (parentElements.hasNext() || pair.compareTo(currentElement) >= 0) {
                         fils.next();
-                    }
                 }
 
             }
-            rechercheNode(fils.next(), pair);
+            rechercheNode(fils.next(), pair, printPath);
         }
     }
 
@@ -273,11 +221,8 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
         print(this.racine, 0);
     }
 
-    public boolean isDebug() {
-        return debug;
+    public void printPathTo(Pair<C, V> pair) {
+        this.rechercheNode(this.racine, pair, true);
     }
 
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
 }
