@@ -21,4 +21,12 @@ public class FileutilsTestCase {
         pairList.forEach(System.out::println);
 
     }
+    @Test
+    public void testGetPairListForKeyName() {
+        List<Pair<String, Integer>> pairList = FileUtils.getPairListForKeyName("all.txt");
+        assertNotNull(pairList);
+        assertTrue(pairList.size() > 0);
+        pairList.forEach(System.out::println);
+
+    }
 }

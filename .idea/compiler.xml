@@ -9,8 +9,5 @@
         <module name="ArbreB" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="ArbreB" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>

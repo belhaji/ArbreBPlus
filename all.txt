@@ -33,10 +33,9 @@ Antoine|38
 Claude|51
 Daniel|87
 Stephanie|15
-Lucas|19
+Adil|19
 Adrien|50
 Sebastien|68
-Chantal|33
 Benjamin|39
 Louise|9
 Carole|21

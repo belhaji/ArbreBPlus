@@ -81,7 +81,7 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
 
             // reusing the same node
             node.getElements().clear();
-            Pair<C,V> el = new Pair<C, V>(elementsADroite.get(0).getCle(), elementsADroite.get(0).getValeur());
+            Pair<C, V> el = new Pair<C, V>(elementsADroite.get(0).getCle(), elementsADroite.get(0).getValeur());
             el.setValeur(null);
             node.getElements().add(el);
 
@@ -90,8 +90,6 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
             nodeFilsGauche.setParent(node);
 
             if (!node.isFeuille()) {
-                // suppressio du 1er element
-                nodeFilsDroite.getElements().remove(elementsADroite.get(0));
                 Iterator<Pair<C, V>> parentIterator = nodeFilsGauche.getElements().iterator();
                 Iterator<Node<C, V>> filsIterator = node.getFils().iterator();
                 Node<C, V> n = null;
@@ -113,10 +111,17 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
                     }
                 }
                 while (filsIterator.hasNext()) {
-                    Node<C,V> nn = filsIterator.next();
+                    Node<C, V> nn = filsIterator.next();
                     nodeFilsDroite.getFils().add(nn);
                     nn.setParent(nodeFilsDroite);
                 }
+
+
+                if (nodeFilsDroite.getFils().size() < (nodeFilsDroite.getElements().size() + 1)) {
+                    // suppressio du 1er element
+                    nodeFilsDroite.getElements().remove(elementsADroite.get(0));
+                }
+
             }
 
             node.getFils().clear();
@@ -124,7 +129,7 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
             node.getFils().add(nodeFilsGauche);
         } else {
 
-            Pair<C,V> el = new Pair<C, V>(elementsADroite.get(0).getCle(), elementsADroite.get(0).getValeur());
+            Pair<C, V> el = new Pair<>(elementsADroite.get(0).getCle(), elementsADroite.get(0).getValeur());
             el.setValeur(null);
             node.getParent().getElements().add(el);
             // parent
@@ -135,8 +140,8 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
             node.getParent().getFils().add(nodeFilsGauche);
 
             if (!node.isFeuille()) {
-                // suppressio du 1er element
-                nodeFilsDroite.getElements().remove(elementsADroite.get(0));
+
+
                 Iterator<Pair<C, V>> parentIterator = nodeFilsGauche.getElements().iterator();
                 Iterator<Node<C, V>> filsIterator = node.getFils().iterator();
                 Node<C, V> n = null;
@@ -158,9 +163,14 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
                     }
                 }
                 while (filsIterator.hasNext()) {
-                    Node<C,V> nn = filsIterator.next();
+                    Node<C, V> nn = filsIterator.next();
                     nodeFilsDroite.getFils().add(nn);
                     nn.setParent(nodeFilsDroite);
+                }
+
+                if (nodeFilsDroite.getFils().size() < (nodeFilsDroite.getElements().size() + 1)) {
+                    // suppressio du 1er element
+                    nodeFilsDroite.getElements().remove(elementsADroite.get(0));
                 }
 
             }
@@ -177,10 +187,12 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
     public Pair<C, V> rechercheElement(Node<C, V> node, Pair<C, V> pair) {
         noeudTrouver = null;
         rechercheNode(node, pair, false);
-        return noeudTrouver.getElements().stream()
-                .filter(p -> p.equals(pair))
-                .findFirst()
-                .orElse(null);
+        if (noeudTrouver != null)
+            return noeudTrouver.getElements().stream()
+                    .filter(p -> p.equals(pair))
+                    .findFirst()
+                    .orElse(null);
+        return null;
     }
 
 
@@ -204,11 +216,12 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
                     rechercheNode(fils.next(), pair, printPath);
                     return;
                 } else {
-                        fils.next();
+                    fils.next();
                 }
 
             }
-            rechercheNode(fils.next(), pair, printPath);
+            if (fils.hasNext())
+                rechercheNode(fils.next(), pair, printPath);
         }
     }
 
