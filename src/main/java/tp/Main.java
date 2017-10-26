@@ -29,29 +29,34 @@ public class Main {
                 arbreBPlus1 = new ArbreBPlus<>(n, Strategie.FULL, StrategieComparaison.EGALE, new
                         Node<Integer, String>());
                 ArbreBPlus<Integer, String> finalArbreBPlus1 = arbreBPlus1;
-                FileUtils.getPairListForKeyAge("all.txt")
-                        .forEach(finalArbreBPlus1::insert);
+                List<Pair<Integer, String>> list = FileUtils.getPairListForKeyAge("all.txt");
+                list.forEach(finalArbreBPlus1::insert);
                 do {
                     System.out.println("1. Chercher un element.");
                     System.out.println("2. Afficher le chemain vers un element.");
-                    System.out.println("3. Afficher l'arbre.");
+                    System.out.println("3. Supprimer un element");
+                    System.out.println("4. Afficher l'arbre.");
                     System.out.print(">> ");
                     choix = Integer.parseInt(scanner.nextLine());
-                    if (choix == 1){
+                    if (choix == 1) {
                         System.out.print("Donner la cle : ");
-                        int element  = Integer.parseInt(scanner.nextLine());
+                        int element = Integer.parseInt(scanner.nextLine());
                         Pair<Integer, String> p = finalArbreBPlus1.rechercheElement(finalArbreBPlus1.getRacine(), new Pair<>(element, null));
                         if (p != null)
-                            System.out.println("Valeur est "+ p.getValeur());
+                            System.out.println("Valeur est " + p.getValeur());
                         else
                             System.out.println("element n'existe pas ");
-                    }else if (choix == 2){
+                    } else if (choix == 2) {
                         System.out.print("Donner la cle : ");
-                        int element  = Integer.parseInt(scanner.nextLine());
+                        int element = Integer.parseInt(scanner.nextLine());
                         finalArbreBPlus1.printPathTo(new Pair<>(element, null));
-                    }else if (choix == 3){
+                    } else if (choix == 3) {
+                        System.out.print("Donner la cle : ");
+                        int element = Integer.parseInt(scanner.nextLine());
+                        finalArbreBPlus1.suppressionNaif(list, new Pair<>(element, null));
+                    } else if (choix == 4) {
                         finalArbreBPlus1.print();
-                    }else {
+                    } else {
                         System.err.println("Choix Incorrect");
                     }
 
@@ -60,29 +65,34 @@ public class Main {
                 arbreBPlus2 = new ArbreBPlus<>(n, Strategie.FULL, StrategieComparaison.EGALE, new
                         Node<String, Integer>());
                 ArbreBPlus<String, Integer> finalArbreBPlus = arbreBPlus2;
-                FileUtils.getPairListForKeyName("all.txt")
-                        .forEach(finalArbreBPlus::insert);
+                List<Pair<String, Integer>> list = FileUtils.getPairListForKeyName("all.txt");
+                list.forEach(finalArbreBPlus::insert);
                 do {
                     System.out.println("1. Chercher un element.");
                     System.out.println("2. Afficher le chemain vers un element.");
-                    System.out.println("3. Afficher l'arbre.");
+                    System.out.println("3. Supprimer un element");
+                    System.out.println("4. Afficher l'arbre.");
                     System.out.print(">> ");
                     choix = Integer.parseInt(scanner.nextLine());
-                    if (choix == 1){
+                    if (choix == 1) {
                         System.out.print("Donner la cle : ");
-                        String element  = scanner.nextLine();
+                        String element = scanner.nextLine();
                         Pair<String, Integer> p = finalArbreBPlus.rechercheElement(finalArbreBPlus.getRacine(), new Pair<>(element, null));
                         if (p != null)
-                            System.out.println("Valeur est "+ p.getValeur());
+                            System.out.println("Valeur est " + p.getValeur());
                         else
                             System.out.println("element n'existe pas ");
-                    }else if (choix == 2){
+                    } else if (choix == 2) {
                         System.out.print("Donner la cle : ");
-                        String element  = scanner.nextLine();
+                        String element = scanner.nextLine();
                         finalArbreBPlus.printPathTo(new Pair<>(element, null));
-                    }else if (choix == 3){
+                    } else if (choix == 3) {
+                        System.out.print("Donner la cle : ");
+                        String element = scanner.nextLine();
+                        finalArbreBPlus.suppressionNaif(list, new Pair<>(element, null));
+                    } else if (choix == 4) {
                         finalArbreBPlus.print();
-                    }else {
+                    } else {
                         System.err.println("Choix Incorrect");
                     }
 

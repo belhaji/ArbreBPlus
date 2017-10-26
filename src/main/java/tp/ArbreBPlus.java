@@ -225,12 +225,41 @@ public class ArbreBPlus<C extends Comparable<C>, V> {
         }
     }
 
+
+    // TODO: à ameliorer pour recalculer les fils lord de suppression de un fils
+    public void suppression(Node<C, V> node, Pair<C, V> pair) {
+        noeudTrouver = null;
+        rechercheNode(node, pair, false);
+        if (noeudTrouver != null) {
+            noeudTrouver.getElements().removeIf(p -> p.getCle().equals(pair.getCle()));
+            if (noeudTrouver.getElements().size() == 0) {
+                if (noeudTrouver.isRacine()) {
+                    this.racine = null;
+                } else {
+                    // supression de noeu vide
+                    noeudTrouver.getParent().getFils().removeIf(f -> f.getId().equals(noeudTrouver.getId()));
+                }
+            }
+        }
+    }
+
+    /**
+     * l'idée ici de recreer l'arbre en ignorant l'element à supprimmer
+     *
+     * @param pair
+     */
+    public void suppressionNaif(List<Pair<C, V>> list, Pair<C, V> pair) {
+        Node<C, V> newRacine = new Node<>();
+        list.removeIf(p -> p.equals(pair));
+        this.racine = newRacine;
+        list.forEach(this::insert);
+    }
+
     private void print(Node<C, V> node, int depth) {
         node.printNode(depth);
         for (Node<C, V> n : node.getFils()) {
             print(n, depth + 1);
         }
-
     }
 
 
